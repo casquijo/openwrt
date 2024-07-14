@@ -60,6 +60,17 @@ mkdir -p /mnt/externaldisk/bkps/
 
 This setup ensures that your OpenWrt configurations are backed up automatically whenever changes are detected, providing an additional layer of security and convenience.
 
+## Schedule tasks or CRON
+
+You can use the backup command directly in the cron or scheduled tasks of the LUCI graphical interface, as in the example below
+
+```
+# /mnt/externaldisk/bkps/ == $path
+00 10 * * * mkdir -p /mnt/externaldisk/bkps/ && sysupgrade -b /mnt/externaldisk/bkps/backup-${HOSTNAME}-$(date +\%F-\%H\%M\%S)-$(date +\%N).tar.gz
+
+```
+
+
 
 
 
