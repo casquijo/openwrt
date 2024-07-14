@@ -1,0 +1,35 @@
+#!/bin/sh
+
+WATCHED_DIRS="/etc/config /etc/init.d /etc/rc.d"
+REF_FILE="/root/scripts/.last_backup"
+
+# Create reference file if it does not exist
+if [ ! -f $REF_FILE ]; then
+    touch $REF_FILE
+fi
+
+while true; do
+    echo "Checking for changes in watched directories..."  # Debug message
+
+    # Check if there are any files modified since the last backup
+    CHANGED_FILES=$(find $WATCHED_DIRS -type f -newer $REF_FILE 2>/dev/null)
+
+    if [ -z "$CHANGED_FILES" ]; then
+        echo "No changes detected, no backup created"  # Debug message
+        sleep 60
+        continue
+    fi
+
+    echo "Changes detected, creating backup..."  # Debug message
+    TIMESTAMP=$(date +'%F-%H%M%S-%N')
+
+# Change here to your path 
+    mkdir -p /mnt/externaldisk/bkps/
+    sysupgrade -b /mnt/externaldisk/bkps/backup-${HOSTNAME}-${TIMESTAMP}.tar.gz
+
+    # Update the reference file to the current time
+    touch $REF_FILE
+    echo "Backup created at /mnt/externaldisk/bkps/backup-${HOSTNAME}-${TIMESTAMP}.tar.gz"  # Debug message
+
+    sleep 60
+done
