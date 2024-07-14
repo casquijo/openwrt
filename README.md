@@ -21,11 +21,11 @@ This script provides an automatic backup service for OpenWrt. It continuously mo
 - **Service Integration**: The script is integrated into OpenWrt's init system, ensuring it starts automatically on boot and runs continuously.
 
 ## Make the Script Executable
-```sh
+```
 chmod +x /root/scripts/backup_on_change.sh
-
+```
 ## Create the Service Script
-```sh
+```
 #!/bin/sh /etc/rc.common
 
 START=99
@@ -40,3 +40,4 @@ stop() {
     echo "Stopping backup on change service"
     killall backup_on_change.sh
 }
+```
