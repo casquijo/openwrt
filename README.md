@@ -20,3 +20,6 @@ This script provides an automatic backup service for OpenWrt. It continuously mo
 - **Backup Creation**: If changes are detected, a backup is created using the `sysupgrade` command, and the reference file is updated to the current time.
 - **Service Integration**: The script is integrated into OpenWrt's init system, ensuring it starts automatically on boot and runs continuously.
 
+## Make the Script Executable
+```sh
+chmod +x /root/scripts/backup_on_change.sh
