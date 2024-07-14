@@ -41,3 +41,26 @@ stop() {
     killall backup_on_change.sh
 }
 ```
+## Make the Service Script Executable
+```
+chmod +x /etc/init.d/backup_on_change
+```
+## Enable and Start the Service
+```
+/etc/init.d/backup_on_change enable
+/etc/init.d/backup_on_change start
+```
+## Configuration
+In the backup script, change the line mkdir -p /mnt/externaldisk/bkps/ to your desired backup path:
+```
+# Change here to your backup path
+mkdir -p /mnt/externaldisk/bkps/
+```
+## Conclusion
+
+This setup ensures that your OpenWrt configurations are backed up automatically whenever changes are detected, providing an additional layer of security and convenience.
+
+
+
+
+
