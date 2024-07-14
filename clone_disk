@@ -1,0 +1,52 @@
+#!/bin/sh
+
+
+# This script clones the OpenWRT disk to an external disk. Therefore, if the drive fails, you can simply point the boot to the other disk.
+
+# Optional CRON JOB -  0 2 * * * /root/xxxxxxx.sh - bkp everyday 2:00 am
+
+# Environment variables required for cron
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+# Variables
+SOURCE_DEVICE="/dev/sdX"  # Replace with the correct NVMe device
+TARGET_DEVICE="/dev/sdY"  # Replace with the correct USB device
+LOG_FILE="/var/log/clone_openwrt.log"
+
+# Log function
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> $LOG_FILE
+}
+
+# Check if the source device is available
+if [ ! -b $SOURCE_DEVICE ]; then
+    log "Source device $SOURCE_DEVICE not found."
+    exit 1
+fi
+
+# Check if the target device is available
+if [ ! -b $TARGET_DEVICE ]; then
+    log "Target device $TARGET_DEVICE not found."
+    exit 1
+fi
+
+log "Starting cloning from $SOURCE_DEVICE to $TARGET_DEVICE."
+
+# Perform the cloning using dd and capture errors
+dd if=$SOURCE_DEVICE of=$TARGET_DEVICE bs=4M conv=noerror,sync 2>> $LOG_FILE
+DD_STATUS=$?
+
+# Check the status of the dd operation
+if [ $DD_STATUS -eq 0 ]; then
+    log "Cloning completed successfully."
+else
+    log "Error during cloning. Error code: $DD_STATUS"
+    exit 1
+fi
+
+# Sync the data on the target device
+sync
+
+log "Sync completed. Daily cloning of OpenWRT to USB finished successfully."
+
+exit 0
