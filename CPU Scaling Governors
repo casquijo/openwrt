@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# use chmod +x and ./ to execute
+
+# List of available governor modes
+governors="performance powersave "
+
+# Display the governor options
+echo "Please choose the desired governor mode by entering the corresponding number:"
+index=0
+for governor in $governors; do
+  echo "$index) $governor"
+  index=$((index + 1))
+done
+
+# Prompt the user to choose a number
+read choice
+
+# Convert the choice to an integer
+choice=$(($choice))
+
+# Check if the choice is valid
+if [ "$choice" -ge 0 ] 2>/dev/null && [ "$choice" -lt $index ]; then
+  governor_mode=$(echo $governors | cut -d ' ' -f $(($choice + 1)))
+  
+  # Apply the chosen governor mode to all CPUs
+  for a in /sys/devices/system/cpu/cpufreq/policy*/scaling_governor; do
+    if echo $governor_mode > $a 2>/dev/null; then
+      echo "Set $a to $governor_mode"
+    else
+      echo "Failed to set $a to $governor_mode"
+    fi
+  done
+  
+  # Confirmation
+  echo "The governor mode has been set to '$governor_mode' for all CPUs where applicable."
+  cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+else
+  echo "Invalid choice. Please run the script again and select a valid number."
+fi
